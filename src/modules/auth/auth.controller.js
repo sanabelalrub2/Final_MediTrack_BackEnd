@@ -1,6 +1,6 @@
 import userModel from "../../../DB/models/user.model.js";
 import { sendEmail } from "../../utils/sendEmail.js";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import { customAlphabet } from 'nanoid';
 import { sendNotification } from "../../utils/sendNotification.js";
@@ -21,7 +21,7 @@ export const register = async (req, res, next) => {
 
     }
 
-    const hashedpassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));
+    const hashedpassword = await bcryptjsjs.hash(password, parseInt(process.env.SALT_ROUND));
 
     const html = `<div>
   <h1>Welcome ${userName}</h1>
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
         return res.status(400).json({ message: " confirm Your Email" });
     }
 
-    const match = await bcrypt.compare(password, user.password);
+    const match =bcryptjs.compare(password, user.password);
     if (!match) {
         return res.status(400).json({ message: " Invalid Data" });
     }
@@ -171,7 +171,7 @@ export const resetPassword = async (req, res) => {
 
     } 
 
-     const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));
+     const hashedPassword = await bcryptjs.hash(password, parseInt(process.env.SALT_ROUND));
      await userModel.updateOne({ email }, { password: hashedPassword, sendCode: null });
       return res.status(200).json({ message: "Password reset successful" });
 
