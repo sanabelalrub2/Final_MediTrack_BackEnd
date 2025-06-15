@@ -37,6 +37,9 @@ app.use("/medicationTaken", medicationTakenRouter);
 app.use("/report", reportRouter);
  
 
+app.use('/hi',(req,res)=>{
+  res.json({message:"Server is running"})
+})
 const PORT = 1110;
 app.listen(PORT, () => {
   console.log("🚀 Server is running on http://localhost:1110");
