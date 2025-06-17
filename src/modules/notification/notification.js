@@ -23,10 +23,14 @@ cron.schedule("* * * * *", async () => {
   for (const schedule of schedules) {
     const frequencyArray = schedule.frequency || [];
 
-    const isTodayIncluded =
-      frequencyArray.includes("daily") || frequencyArray.includes(today);
-
+    const isTodayIncluded = frequencyArray.includes("daily") || frequencyArray.includes(today);
     if (!isTodayIncluded) continue;
+
+    // تأكد من وجود بيانات مهمة
+    if (!schedule.medicationId || !schedule.userId) {
+      console.log(`⚠️ Missing medication or user info for schedule ${schedule._id}`);
+      continue;
+    }
 
     let modified = false; // علم لتحديد ما إذا تم التعديل على أي timeEntry
 
@@ -39,8 +43,9 @@ cron.schedule("* * * * *", async () => {
 
       console.log(`🔄 Checking med at ${timeEntry.time}, time diff = ${timeDiff.toFixed(2)} min`);
 
-      if (timeDiff > 0 && timeDiff <= 5) {
-        const lastNotified = timeEntry.lastNotifiedAt || new Date(0);
+      // تعديل الشرط ليشمل الوقت الحالي وحتى 5 دقائق بعد الموعد
+      if (timeDiff >= 0 && timeDiff <= 5) {
+        const lastNotified = timeEntry.lastNotifiedAt ? new Date(timeEntry.lastNotifiedAt) : new Date(0);
         const minutesSinceLast = (now - lastNotified) / 60000;
 
         console.log(`⌛ Last notification for this time was ${minutesSinceLast.toFixed(2)} minutes ago`);
