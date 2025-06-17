@@ -74,12 +74,14 @@ export const createSchedule = async (req, res) => {
 // Update a schedule (only if it belongs to the user)
 export const updateSchedule = async (req, res) => {
   try {
+    console.log(req.body);
+
     const updated = await scheduleModel.findOneAndUpdate(
       {
         _id: req.params.id,
         userId: req.user.id,
       },
-      req.body,
+req.body,
       {
         new: true,
         runValidators: true,
@@ -136,6 +138,7 @@ export const getTodaySchedules = async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    console.log(today)
     const schedules = await scheduleModel.find({
       userId: req.user.id,
       startDate: { $lte: today },
@@ -143,9 +146,9 @@ export const getTodaySchedules = async (req, res) => {
     })
       .populate("userId")
       .populate("medicationId");
-
+console.log(schedules)
     // تصفية الجداول التي الدواء فيها موجود فقط
-    const filteredSchedules = schedules.filter(schedule => schedule.medicationId !== null);
+    // const filteredSchedules = schedules.filter(schedule => schedule.medicationId !== null);
 
     res.json({ message: "Today's schedules", schedules: filteredSchedules });
   } catch (error) {
